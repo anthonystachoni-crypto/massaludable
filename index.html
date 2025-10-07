@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Más Saludable - Frutos Secos</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #e5e5ee;
+      font-family: 'Merriweather', serif;
+    }
+
+    .flip-card {
+      background-color: transparent;
+      width: 250px;
+      height: 350px;
+      perspective: 1000px;
+      cursor: pointer;
+      margin: auto;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s;
+      transform-style: preserve-3d;
+    }
+
+    .flip-card-inner.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front,
+    .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      box-sizing: border-box;
+    }
+
+    .flip-card-front {
+      background-color: white;
+    }
+
+    .flip-card-front img {
+      max-width: 100%;
+      max-height: 150px;
+      object-fit: contain;
+    }
+
+    .flip-card-back {
+      background-color: #f8f9fa;
+      color: #333;
+      transform: rotateY(180deg);
+      text-align: center;
+    }
+    
+    /* --- CSS PARA LA NOTIFICACIÓN (MODIFICADO) --- */
+    #notification {
+      position: fixed;
+      /* Ajustamos la posición para que esté al lado del botón (bottom-6 right-6) */
+      bottom: 24px; /* Equivale a bottom-6 de Tailwind */
+      right: 90px;  /* Espacio a la derecha (botón + margen) */
+      /* Quitamos el centrado horizontal */
+      background-color: #28a745;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.5s, visibility 0.5s, transform 0.5s; /* Agregamos transform a la transición */
+      transform: scale(0.5); /* Empezamos con la notificación pequeña */
+    }
+
+    #notification.show {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1); /* La escalamos a su tamaño normal */
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="bg-cover bg-center text-white py-20" style="background-image: url('fondo-nueces.jpg');">
+    <div class="container mx-auto text-center">
+      <img src="encabezado.png" alt="Más Saludable" class="mx-auto w-96 h-40 object-contain rounded-md shadow-lg">
+    </div>
+  </header>
+
+  <section id="nosotros" class="container mx-auto py-16 px-4">
+    <div class="grid md:grid-cols-2 gap-8 items-center">
+
+      <div class="relative overflow-hidden rounded-lg shadow-lg h-80">
+        <div id="nosotros-slides" class="w-full h-full">
+          <img src="nosotros.jpg" class="nosotros-slide w-full h-80 object-cover" alt="Equipo Más Saludable">
+          <img src="nosotros1.jpg" class="nosotros-slide w-full h-80 object-cover hidden" alt="Local Más Saludable">
+          <img src="nosotros2.jpg" class="nosotros-slide w-full h-80 object-cover hidden" alt="Productos Más Saludable">
+        </div>
+        <button id="prev-slide" class="absolute top-1/2 left-2 transform -translate-y-1/2 bg-black bg-opacity-30 text-white px-3 py-2 rounded-full hover:bg-opacity-50 transition">⬅</button>
+        <button id="next-slide" class="absolute top-1/2 right-2 transform -translate-y-1/2 bg-black bg-opacity-30 text-white px-3 py-2 rounded-full hover:bg-opacity-50 transition">➡</button>
+      </div>
+
+      <div>
+        <h2 class="text-3xl font-bold mb-4">Sobre <span class="text-green-600">Más Saludable</span></h2>
+        <p class="text-gray-700 leading-relaxed mb-4">
+          Somos una distribuidora familiar con 12 años de dedicacion de acercarte frutos secos, hierbas y especias de la mejor calidad. Trabajamos con productores confiables y seleccionamos cada lote para asegurar frescura, sabor y valor nutricional.
+        </p>
+        <p class="text-gray-700 leading-relaxed">
+          Enviamos a toda la region de Buenos Aires Norte y preparamos fraccionado por kilo para mayor comodidad. ¡Gracias por elegirnos!
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <section class="container mx-auto py-12">
+    <h2 class="text-3xl font-bold text-center mb-8">Catálogo de Productos</h2>
+
+    <div class="flex justify-center space-x-4 mb-6">
+      <button onclick="showTab('frutos')" class="tab-btn bg-green-600 text-white px-4 py-2 rounded">Frutos Secos</button>
+      <button onclick="showTab('especias')" class="tab-btn bg-green-600 text-white px-4 py-2 rounded">Especias</button>
+      <button onclick="showTab('hierbas')" class="tab-btn bg-green-600 text-white px-4 py-2 rounded">Hierbas</button>
+    </div>
+
+    <div id="frutos" class="tab-content grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="almendra.png" alt="Almendra Pelada">
+            <h3 class="font-bold mt-2">Almendra Pelada</h3>
+            <p>$14.000</p>
+            <button onclick="addToCart('Almendra Pelada', 14012.35)" class="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Agregar 1 Kg</button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold">Almendra Pelada</h3>
+            <p class="px-2">Rica en proteínas y grasas saludables, ideal para colaciones o repostería.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="Nuez.jpg" alt="Nuez">
+            <h3 class="font-bold mt-2">Nuez</h3>
+            <p>$14.000</p>
+            <button onclick="addToCart('Nuez', 14012.35)" class="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Agregar 1 Kg</button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold">Nuez</h3>
+            <p class="px-2">Fuente de omega 3, excelente para el corazón y la memoria.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="avellana.jpg" alt="Avellana">
+            <h3 class="font-bold mt-2">Avellana</h3>
+            <p>$14.000</p>
+            <button onclick="addToCart('Avellana', 14012.35)" class="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Agregar 1 Kg</button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold">Avellana</h3>
+            <p class="px-2">Excelente para la energía y muy usada en repostería.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="garrapiñada de almendra.jpg" alt="Garrapiñada">
+            <h3 class="font-bold mt-2">Garrapiñada de almendras</h3>
+            <p>$14.000</p>
+            <button onclick="addToCart('Garrapiñada de almendra', 14012.35)" class="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Agregar 1 Kg</button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold">Garrapiñada</h3>
+            <p class="px-2">Un snack dulce y crocante, perfecto para cualquier momento.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="datil.jpg" alt="Dátil Medjool">
+            <h3 class="font-bold mt-2">Dátil Medjool</h3>
+            <p>$14.000</p>
+            <button onclick="addToCart('Dátil Medjool', 14012.35)" class="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Agregar 1 Kg</button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold">Dátil Medjool</h3>
+            <p class="px-2">Endulzante natural, rico en fibra y energía instantánea.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="especias" class="tab-content hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white shadow-md rounded p-4 text-center">
+        <img src="pimienta.jpg" class="w-full h-40 object-cover">
+        <h3 class="font-bold mt-2">Pimienta Negra</h3>
+        <p>$5.000</p>
+        <button onclick="addToCart('Pimienta Negra', 5000.00)" class="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Agregar 1 Kg</button>
+      </div>
+    </div>
+    <div id="hierbas" class="tab-content hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="bg-white shadow-md rounded p-4 text-center">
+        <img src="menta.jpg" class="w-full h-40 object-cover">
+        <h3 class="font-bold mt-2">Menta</h3>
+        <p>$3.000</p>
+        <button onclick="addToCart('Menta', 3000.00)" class="mt-3 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Agregar 1 Kg</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-green-600 text-white text-center p-6 mt-6">
+    <p>📦 Contactanos por WhatsApp</p>
+    <a href="https://wa.me/541138886156" target="_blank" class="bg-white text-green-600 px-6 py-2 mt-2 inline-block rounded-full font-semibold shadow-md">
+      Hacer Pedido
+    </a>
+  </footer>
+
+  <button id="toggle-cart" class="fixed bottom-6 right-6 bg-[#ebebeb] text-green-600 p-4 rounded-full shadow-lg">🛒</button>
+
+  <aside id="cart-panel" class="fixed right-0 top-0 h-full w-72 bg-white shadow-lg p-4 overflow-y-auto transform translate-x-full transition-transform duration-300 z-50">
+    <button id="close-cart" class="absolute top-4 right-4 text-gray-600 hover:text-black text-2xl" aria-label="Cerrar carrito">✖</button>
+    <h2 class="text-2xl font-bold mb-4 mt-8">🛒 Carrito</h2>
+    <ul id="cart-items" class="mb-4"></ul>
+    <p class="text-lg font-semibold">Total: $<span id="cart-total">0</span></p>
+    <a id="whatsapp-checkout" href="https://wa.me/541138886156" target="_blank" class="mt-4 block w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 text-center">Finalizar Pedido</a>
+  </aside>
+  
+  <div id="notification">¡Producto agregado! 👉</div>
+
+
+  <script>
+    // --- LÓGICA DEL CARRITO (APERTURA Y CIERRE) ---
+    const toggleButton = document.getElementById("toggle-cart");
+    const cartPanel = document.getElementById("cart-panel");
+    const closeButton = document.getElementById("close-cart");
+
+    toggleButton.addEventListener("click", () => {
+      cartPanel.classList.toggle("translate-x-full");
+    });
+
+    closeButton.addEventListener("click", () => {
+      cartPanel.classList.add("translate-x-full");
+    });
+
+    // --- LÓGICA DEL CARRITO (AÑADIR, QUITAR, ACTUALIZAR) ---
+    const cart = [];
+
+    function showNotification() {
+      const notification = document.getElementById("notification");
+      notification.classList.add("show");
+      setTimeout(() => {
+        notification.classList.remove("show");
+      }, 2500); // Un poco más rápido
+    }
+
+    function addToCart(product, price) {
+      const item = cart.find(i => i.product === product);
+      if (item) {
+        item.quantity += 1;
+      } else {
+        cart.push({ product, price, quantity: 1 });
+      }
+      renderCart();
+      showNotification();
+    }
+
+    function renderCart() {
+      const list = document.getElementById("cart-items");
+      const totalEl = document.getElementById("cart-total");
+      list.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((item, idx) => {
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+        list.innerHTML += `
+          <li class="flex items-center justify-between gap-2 mb-2">
+            <span class="text-sm">${item.product} (x${item.quantity} Kg)</span>
+            <div class="flex items-center gap-2">
+              <button class="px-2 rounded bg-gray-200" onclick="decrease(${idx})">-</button>
+              <button class="px-2 rounded bg-gray-200" onclick="increase(${idx})">+</button>
+              <span class="min-w-[80px] text-right">$${subtotal.toFixed(2)}</span>
+              <button class="text-red-600" title="Quitar" onclick="removeItem(${idx})">✕</button>
+            </div>
+          </li>
+        `;
+      });
+
+      totalEl.textContent = total.toFixed(2);
+
+      const wa = document.getElementById("whatsapp-checkout");
+      const msg = encodeURIComponent(
+        "Hola! Quiero este pedido:\n" +
+        cart.map(i => `• ${i.quantity} Kg ${i.product} — $${(i.price * i.quantity).toFixed(2)}`).join("\n") +
+        `\nTotal: $${total.toFixed(2)}`
+      );
+      wa.href = `https://wa.me/541138886156?text=${msg}`;
+    }
+
+    function increase(index) {
+      cart[index].quantity += 1;
+      renderCart();
+    }
+
+    function decrease(index) {
+      cart[index].quantity = Math.max(1, cart[index].quantity - 1);
+      renderCart();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    // --- LÓGICA DE PESTAÑAS (TABS) ---
+    function showTab(id) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+    }
+
+    // --- LÓGICA DEL CARRUSEL "NOSOTROS" ---
+    (function() {
+      const slides = document.querySelectorAll('#nosotros-slides .nosotros-slide');
+      let i = 0;
+      function showSlide(index) {
+        slides.forEach((slide, k) => slide.classList.toggle('hidden', k !== index));
+      }
+      showSlide(i);
+      setInterval(() => { i = (i + 1) % slides.length; showSlide(i); }, 4000);
+      document.getElementById("prev-slide").addEventListener("click", () => { i = (i - 1 + slides.length) % slides.length; showSlide(i); });
+      document.getElementById("next-slide").addEventListener("click", () => { i = (i + 1) % slides.length; showSlide(i); });
+    })();
+
+    // --- LÓGICA DE LAS TARJETAS GIRATORIAS (FLIP CARDS) ---
+    document.querySelectorAll('.flip-card').forEach(card => {
+      card.addEventListener('click', (event) => {
+        if (event.target.tagName.toLowerCase() !== 'button') {
+          card.querySelector('.flip-card-inner').classList.toggle('is-flipped');
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
