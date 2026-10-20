@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALMACÉN EL CHILE - Tu Kiosco y Almacén de Confianza</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f4f5f7;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    /* Target Flip Card Style */
+    .flip-card {
+      background-color: transparent;
+      width: 100%;
+      max-width: 260px;
+      height: 380px;
+      perspective: 1000px;
+      cursor: pointer;
+      margin: auto;
+    }
+
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+
+    .flip-card-inner.is-flipped {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front,
+    .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem;
+      box-sizing: border-box;
+      border: 1px solid #f0f0f0;
+    }
+
+    .flip-card-front {
+      background-color: white;
+    }
+
+    .flip-card-front img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+    }
+
+    .flip-card-back {
+      background-color: #fff7f7;
+      color: #1f2937;
+      transform: rotateY(180deg);
+      border: 2px solid #ef4444;
+      text-align: center;
+    }
+
+    /* Animated floating notification */
+    #notification {
+      position: fixed;
+      bottom: 24px;
+      right: 90px;
+      background-color: #10b981;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 9999px;
+      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform: scale(0.5) translateY(20px);
+      font-weight: 600;
+    }
+
+    #notification.show {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+    }
+
+    .active-tab {
+      background-color: #dc2626 !important;
+      color: white !important;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+  </style>
+</head>
+
+<body class="text-gray-800 flex flex-col min-h-screen">
+
+  <!-- HEADER CON BANNER REFRESCANTE Y COLORIDO -->
+  <header class="relative bg-gradient-to-r from-red-600 via-red-500 to-amber-500 text-white py-12 px-4 shadow-xl overflow-hidden">
+    <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    <div class="container mx-auto text-center relative z-10 max-w-4xl">
+      <div class="inline-block bg-white text-red-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-3 shadow">
+        🛒 Tu Almacén & Kiosco Amigo
+      </div>
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight drop-shadow-md mb-2">
+        ALMACÉN EL CHILE
+      </h1>
+      <p class="text-lg md:text-xl font-medium text-amber-100 max-w-2xl mx-auto drop-shadow-sm">
+        Bebidas heladas, golosinas, fiambres, productos de almacén y todo lo que necesitás al mejor precio del barrio.
+      </p>
+    </div>
+  </header>
+
+  <!-- NOSOTROS (CON CARRUSEL CORREGIDO Y MEJORADO) -->
+  <section id="nosotros" class="container mx-auto py-12 px-4 max-w-6xl">
+    <div class="grid md:grid-cols-2 gap-8 items-center bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-gray-100">
+
+      <!-- CARROUSEL IMÁGENES DE ALMACÉN -->
+      <div class="relative overflow-hidden rounded-xl shadow-md h-72 md:h-80 group">
+        <div id="nosotros-slides" class="w-full h-full">
+          <img src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=800&q=80" class="nosotros-slide w-full h-full object-cover transition-opacity duration-500" alt="Almacén El Chile Frente">
+          <img src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80" class="nosotros-slide w-full h-full object-cover hidden transition-opacity duration-500" alt="Estanterías de Almacén">
+          <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" class="nosotros-slide w-full h-full object-cover hidden transition-opacity duration-500" alt="Golosinas y Bebidas">
+        </div>
+        <button id="prev-slide" class="absolute top-1/2 left-3 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition opacity-80 group-hover:opacity-100" aria-label="Anterior">⬅</button>
+        <button id="next-slide" class="absolute top-1/2 right-3 transform -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition opacity-80 group-hover:opacity-100" aria-label="Siguiente">➡</button>
+      </div>
+
+      <!-- DESCRIPCIÓN -->
+      <div>
+        <h2 class="text-3xl font-extrabold mb-4 text-gray-900">Sobre <span class="text-red-600">Almacén El Chile</span></h2>
+        <p class="text-gray-600 leading-relaxed mb-4 text-base">
+          Somos el almacén y kiosco familiar con la atención más cálida del barrio. Nos dedicamos a brindarte productos frescos, snacks instantáneos, bebidas bien heladas y todos los insumos de primera necesidad para tu hogar.
+        </p>
+        <p class="text-gray-600 leading-relaxed text-base mb-6">
+          Hacé tu pedido directo desde nuestra web y te lo preparamos al instante o te lo mandamos a la puerta de tu casa. ¡Gracias por confiar en nosotros!
+        </p>
+        <div class="flex items-center gap-4 text-sm font-semibold text-gray-700 bg-red-50 p-3 rounded-lg border border-red-100">
+          <span>📍 Atención rápida</span>
+          <span>•</span>
+          <span>⚡ Entregas en el día</span>
+          <span>•</span>
+          <span>💯 Calidad asegurada</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATÁLOGO DE PRODUCTOS -->
+  <section class="container mx-auto py-8 px-4 max-w-7xl flex-grow">
+    <h2 class="text-3xl font-extrabold text-center mb-2 text-gray-900">Catálogo de Productos</h2>
+    <p class="text-center text-gray-500 mb-8">Hacé click en la tarjeta para ver los detalles de cada producto</p>
+
+    <!-- PESTAÑAS / TABS -->
+    <div class="flex flex-wrap justify-center gap-2 mb-10">
+      <button onclick="showTab('almacen', this)" class="tab-btn active-tab bg-white text-gray-700 font-bold px-5 py-2.5 rounded-full border border-gray-200 shadow-sm hover:border-red-500 transition">
+        🛒 Almacén
+      </button>
+      <button onclick="showTab('bebidas', this)" class="tab-btn bg-white text-gray-700 font-bold px-5 py-2.5 rounded-full border border-gray-200 shadow-sm hover:border-red-500 transition">
+        🥤 Bebidas & Snacks
+      </button>
+      <button onclick="showTab('kiosco', this)" class="tab-btn bg-white text-gray-700 font-bold px-5 py-2.5 rounded-full border border-gray-200 shadow-sm hover:border-red-500 transition">
+        🍬 Kiosco & Golosinas
+      </button>
+    </div>
+
+    <!-- PESTAÑA: ALMACÉN -->
+    <div id="almacen" class="tab-content grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1621996346565-e3def6164286?auto=format&fit=crop&w=500&q=80" alt="Fideos Tallarines">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Fideos Tallarines 500g</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$1.200</p>
+            </div>
+            <button onclick="addToCart('Fideos Tallarines 500g', 1200)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Fideos Tallarines</h3>
+            <p class="text-sm text-gray-600">Fideos de sémola de trigo candeal de primera calidad. Ideal para acompañar con tu salsa preferida.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=500&q=80" alt="Arroz Largo Fino">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Arroz Largo Fino 1kg</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$1.800</p>
+            </div>
+            <button onclick="addToCart('Arroz Largo Fino 1kg', 1800)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Arroz Largo Fino</h3>
+            <p class="text-sm text-gray-600">No se pasa ni se pega. Granos seleccionados ideales para guisados, ensaladas y guarniciones.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=500&q=80" alt="Aceite Girasol">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Aceite de Girasol 900ml</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$2.500</p>
+            </div>
+            <button onclick="addToCart('Aceite de Girasol 900ml', 2500)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Aceite de Girasol</h3>
+            <p class="text-sm text-gray-600">Puro de girasol, ideal para frituras, ensaladas y todo tipo de cocciones diarias.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=500&q=80" alt="Harina de Trigo">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Harina 0000 1kg</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$1.100</p>
+            </div>
+            <button onclick="addToCart('Harina 0000 1kg', 1100)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Harina 0000 Ultra Refinada</h3>
+            <p class="text-sm text-gray-600">Harina blanca de alta calidad perfecta para repostería, pizzas, panes y pastas caseras.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PESTAÑA: BEBIDAS & SNACKS -->
+    <div id="bebidas" class="tab-content hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=500&q=80" alt="Gaseosa Cola">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Gaseosa Cola 2.25L</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$2.800</p>
+            </div>
+            <button onclick="addToCart('Gaseosa Cola 2.25L', 2800)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Gaseosa Cola</h3>
+            <p class="text-sm text-gray-600">¡Súper helada! La preferida para las almuerzos y cenas familiares.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1560512823-829485b8bf24?auto=format&fit=crop&w=500&q=80" alt="Agua Mineral">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Agua Mineral 1.5L</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$1.000</p>
+            </div>
+            <button onclick="addToCart('Agua Mineral 1.5L', 1000)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Agua Mineral</h3>
+            <p class="text-sm text-gray-600">Agua de manantial purificada, baja en sodio. Disponible fría o al tiempo.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1566478989037-eec170784d0b?auto=format&fit=crop&w=500&q=80" alt="Papas Fritas Snacks">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Papas Fritas Lays 150g</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$2.200</p>
+            </div>
+            <button onclick="addToCart('Papas Fritas Lays 150g', 2200)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Papas Fritas Saladas</h3>
+            <p class="text-sm text-gray-600">Crocantes y doradas. El snack infaltable para picadas o picar algo rápido.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=500&q=80" alt="Cerveza Rubia">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Cerveza Rubia 1L</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$3.100</p>
+            </div>
+            <button onclick="addToCart('Cerveza Rubia 1L', 3100)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Cerveza Rubia 1 Litro</h3>
+            <p class="text-sm text-gray-600">Retornable o descartable. Helada y lista para disfrutar en cualquier ocasión.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PESTAÑA: KIOSCO & GOLOSINAS -->
+    <div id="kiosco" class="tab-content hidden grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1582293041079-7814c2f12063?auto=format&fit=crop&w=500&q=80" alt="Alfajor Chocolate">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Alfajor Triple Chocolate</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$950</p>
+            </div>
+            <button onclick="addToCart('Alfajor Triple Chocolate', 950)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Alfajor Triple</h3>
+            <p class="text-sm text-gray-600">Triple capa relleno con dulce de leche repostero y baño de chocolate semiamargo.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=500&q=80" alt="Chocolate con Leche">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Tableta Chocolate 100g</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$1.600</p>
+            </div>
+            <button onclick="addToCart('Tableta Chocolate 100g', 1600)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Chocolate con Leche</h3>
+            <p class="text-sm text-gray-600">Deliciosa barra de chocolate fino con leche y trocitos de maní tostado.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?auto=format&fit=crop&w=500&q=80" alt="Caramelos y Gomitas">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Paquete Gomitas 90g</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$850</p>
+            </div>
+            <button onclick="addToCart('Paquete Gomitas 90g', 850)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Gomitas de Fruta</h3>
+            <p class="text-sm text-gray-600">Gomitas frutales surtidas, masticables y súper dulces.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-card">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=500&q=80" alt="Galletitas Rellenas">
+            <div class="w-full text-center mt-2">
+              <h3 class="font-bold text-gray-800 text-lg">Galletitas Rellenas 120g</h3>
+              <p class="text-red-600 font-extrabold text-xl mt-1">$1.150</p>
+            </div>
+            <button onclick="addToCart('Galletitas Rellenas 120g', 1150)" class="w-full mt-3 bg-red-600 text-white font-bold py-2 rounded-lg hover:bg-red-700 transition shadow">
+              + Agregar
+            </button>
+          </div>
+          <div class="flip-card-back">
+            <h3 class="font-bold text-lg mb-2 text-red-600">Galletitas Rellenas</h3>
+            <p class="text-sm text-gray-600">Galletitas de chocolate rellenas de crema de vainilla. Perfectas para la merienda.</p>
+            <span class="mt-auto text-xs text-gray-400 font-semibold">Toca fuera para voltear</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bg-gray-900 text-white text-center p-8 mt-12 border-t-4 border-red-600">
+    <div class="container mx-auto max-w-4xl">
+      <h3 class="text-2xl font-extrabold mb-2 text-amber-400">ALMACÉN EL CHILE</h3>
+      <p class="text-gray-400 text-sm mb-4">¿Tenés alguna consulta o querés un pedido especial? ¡Escribinos directo!</p>
+      <a href="https://wa.me/541138886156" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3 rounded-full inline-flex items-center gap-2 shadow-lg transition transform hover:-translate-y-0.5">
+        <span>💬 Contactar por WhatsApp</span>
+      </a>
+      <p class="text-xs text-gray-600 mt-6">© 2026 Almacén El Chile - Todos los derechos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- BOTÓN FLOTANTE CARRITO DE COMPRAS -->
+  <button id="toggle-cart" class="fixed bottom-6 right-6 bg-red-600 hover:bg-red-700 text-white p-4 rounded-full shadow-2xl z-40 transition-transform active:scale-95 flex items-center justify-center">
+    <span class="text-2xl">🛒</span>
+    <span id="cart-badge" class="absolute -top-1 -right-1 bg-amber-400 text-gray-900 text-xs font-black w-6 h-6 rounded-full flex items-center justify-center shadow hidden">0</span>
+  </button>
+
+  <!-- PANEL LATERAL DEL CARRITO -->
+  <aside id="cart-panel" class="fixed right-0 top-0 h-full w-80 md:w-96 bg-white shadow-2xl p-6 overflow-y-auto transform translate-x-full transition-transform duration-300 z-50 flex flex-col justify-between">
+    <div>
+      <div class="flex items-center justify-between pb-4 border-b border-gray-100">
+        <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <span>🛒</span> Tu Pedido
+        </h2>
+        <button id="close-cart" class="text-gray-400 hover:text-red-600 text-2xl font-bold transition" aria-label="Cerrar carrito">✕</button>
+      </div>
+
+      <ul id="cart-items" class="mt-4 divide-y divide-gray-100 max-h-[60vh] overflow-y-auto pr-1">
+        <p id="empty-cart-msg" class="text-center text-gray-400 py-8 text-sm">Tu carrito está vacío.<br>¡Agregá tus productos favoritos!</p>
+      </ul>
+    </div>
+
+    <div class="pt-4 border-t border-gray-100 mt-auto">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-gray-600 font-semibold text-lg">Total estimado:</span>
+        <span class="text-2xl font-black text-red-600">$<span id="cart-total">0</span></span>
+      </div>
+
+      <a id="whatsapp-checkout" href="https://wa.me/541138886156" target="_blank" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg text-center flex items-center justify-center gap-2 transition">
+        <span>📲 Enviar Pedido por WhatsApp</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- NOTIFICACIÓN DE PRODUCTO AGREGADO -->
+  <div id="notification">
+    ✨ ¡Agregado al carrito!
+  </div>
+
+  <script>
+    // --- LÓGICA DEL CARRITO (APERTURA Y CIERRE) ---
+    const toggleButton = document.getElementById("toggle-cart");
+    const cartPanel = document.getElementById("cart-panel");
+    const closeButton = document.getElementById("close-cart");
+
+    toggleButton.addEventListener("click", () => {
+      cartPanel.classList.toggle("translate-x-full");
+    });
+
+    closeButton.addEventListener("click", () => {
+      cartPanel.classList.add("translate-x-full");
+    });
+
+    // --- LÓGICA DEL CARRITO (AÑADIR, QUITAR, ACTUALIZAR) ---
+    const cart = [];
+
+    function showNotification() {
+      const notification = document.getElementById("notification");
+      notification.classList.add("show");
+      setTimeout(() => {
+        notification.classList.remove("show");
+      }, 2000);
+    }
+
+    function addToCart(product, price) {
+      const item = cart.find(i => i.product === product);
+      if (item) {
+        item.quantity += 1;
+      } else {
+        cart.push({ product, price, quantity: 1 });
+      }
+      renderCart();
+      showNotification();
+    }
+
+    function renderCart() {
+      const list = document.getElementById("cart-items");
+      const totalEl = document.getElementById("cart-total");
+      const emptyMsg = document.getElementById("empty-cart-msg");
+      const badge = document.getElementById("cart-badge");
+
+      list.innerHTML = "";
+      let total = 0;
+      let totalCount = 0;
+
+      if (cart.length === 0) {
+        list.innerHTML = `<p class="text-center text-gray-400 py-8 text-sm">Tu carrito está vacío.<br>¡Agregá tus productos favoritos!</p>`;
+        badge.classList.add("hidden");
+      } else {
+        badge.classList.remove("hidden");
+        cart.forEach((item, idx) => {
+          const subtotal = item.price * item.quantity;
+          total += subtotal;
+          totalCount += item.quantity;
+
+          const li = document.createElement("li");
+          li.className = "py-3 flex flex-col gap-1";
+          li.innerHTML = `
+            <div class="flex justify-between items-start">
+              <span class="font-bold text-sm text-gray-800">${item.product}</span>
+              <button class="text-red-500 hover:text-red-700 text-xs font-bold" title="Quitar" onclick="removeItem(${idx})">✕</button>
+            </div>
+            <div class="flex justify-between items-center mt-1">
+              <div class="flex items-center gap-2 border border-gray-200 rounded-lg px-2 py-0.5 bg-gray-50">
+                <button class="text-gray-600 font-bold px-1 hover:text-red-600 text-sm" onclick="decrease(${idx})">-</button>
+                <span class="text-xs font-extrabold text-gray-800 w-4 text-center">${item.quantity}</span>
+                <button class="text-gray-600 font-bold px-1 hover:text-green-600 text-sm" onclick="increase(${idx})">+</button>
+              </div>
+              <span class="text-sm font-black text-gray-900">$${subtotal.toLocaleString('es-AR')}</span>
+            </div>
+          `;
+          list.appendChild(li);
+        });
+      }
+
+      badge.textContent = totalCount;
+      totalEl.textContent = total.toLocaleString('es-AR');
+
+      // WhatsApp link generator
+      const wa = document.getElementById("whatsapp-checkout");
+      let msg = "🛒 *NUEVO PEDIDO - ALMACÉN EL CHILE*\n\n";
+      
+      if (cart.length > 0) {
+        cart.forEach(i => {
+          msg += `• x${i.quantity} ${i.product} — $${(i.price * i.quantity).toLocaleString('es-AR')}\n`;
+        });
+        msg += `\n💵 *TOTAL ESTIMADO:* $${total.toLocaleString('es-AR')}\n\n¡Hola! Quisiera realizar este pedido.`;
+      } else {
+        msg += "Hola Almacén El Chile, quisiera realizar una consulta.";
+      }
+
+      wa.href = `https://wa.me/541138886156?text=${encodeURIComponent(msg)}`;
+    }
+
+    function increase(index) {
+      cart[index].quantity += 1;
+      renderCart();
+    }
+
+    function decrease(index) {
+      if (cart[index].quantity > 1) {
+        cart[index].quantity -= 1;
+      } else {
+        cart.splice(index, 1);
+      }
+      renderCart();
+    }
+
+    function removeItem(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    // --- LÓGICA DE PESTAÑAS (TABS) ---
+    function showTab(id, btnElement) {
+      document.querySelectorAll(".tab-content").forEach(el => el.classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.classList.remove("active-tab");
+      });
+      btnElement.classList.add("active-tab");
+    }
+
+    // --- LÓGICA DEL CARRUSEL NOSOTROS ---
+    (function () {
+      const slides = document.querySelectorAll('#nosotros-slides .nosotros-slide');
+      let i = 0;
+
+      function showSlide(index) {
+        slides.forEach((slide, k) => {
+          if (k === index) {
+            slide.classList.remove('hidden');
+          } else {
+            slide.classList.add('hidden');
+          }
+        });
+      }
+
+      showSlide(i);
+
+      let slideInterval = setInterval(() => {
+        i = (i + 1) % slides.length;
+        showSlide(i);
+      }, 4000);
+
+      document.getElementById("prev-slide").addEventListener("click", () => {
+        clearInterval(slideInterval);
+        i = (i - 1 + slides.length) % slides.length;
+        showSlide(i);
+      });
+
+      document.getElementById("next-slide").addEventListener("click", () => {
+        clearInterval(slideInterval);
+        i = (i + 1) % slides.length;
+        showSlide(i);
+      });
+    })();
+
+    // --- LÓGICA DE TARJETAS GIRATORIAS (FLIP CARDS) ---
+    document.querySelectorAll('.flip-card').forEach(card => {
+      card.addEventListener('click', (event) => {
+        // Prevenir rotación si se hace click en botones
+        if (event.target.tagName.toLowerCase() !== 'button') {
+          card.querySelector('.flip-card-inner').classList.toggle('is-flipped');
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>
